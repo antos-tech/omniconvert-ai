@@ -1,45 +1,54 @@
 :root {
-    --bg-color: #020617;
-    --text-main: #ffffff;
+    --bg: #020617;
+    --text: #ffffff;
     --text-sec: #94a3b8;
-    --card-bg: rgba(30, 41, 59, 0.4);
-    --border-color: rgba(99, 102, 241, 0.2);
+    --card: rgba(30, 41, 59, 0.4);
+    --border: rgba(99, 102, 241, 0.2);
     --grad: radial-gradient(circle at 50% -20%, #1e1b4b 0%, #020617 80%);
 }
 
 body.light-mode {
-    --bg-color: #f8fafc;
-    --text-main: #0f172a;
+    --bg: #f8fafc;
+    --text: #0f172a;
     --text-sec: #64748b;
-    --card-bg: #ffffff;
-    --border-color: #e2e8f0;
+    --card: #ffffff;
+    --border: #e2e8f0;
     --grad: radial-gradient(circle at 50% -20%, #e0e7ff 0%, #f8fafc 80%);
 }
 
 body {
     margin: 0;
     font-family: 'Inter', sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-main);
-    transition: background-color 0.3s ease;
+    background-color: var(--bg);
+    color: var(--text);
+    transition: all 0.3s ease;
 }
 
 .hero-gradient {
     background: var(--grad);
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .upload-box {
-    background: var(--card-bg);
-    border: 2px dashed var(--border-color);
+    background: var(--card);
+    border: 2px dashed var(--border);
     border-radius: 1.5rem;
     backdrop-filter: blur(10px);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.upload-box:hover {
+    border-color: #6366f1;
+    transform: translateY(-2px);
 }
 
 .feature-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 1.2rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
 }
-
-.text-slate-400, .text-slate-500 { color: var(--text-sec) !important; }
