@@ -1,3 +1,5 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
 :root {
     --bg: #020617;
     --text: #ffffff;
@@ -17,7 +19,6 @@ body.light-mode {
 }
 
 body {
-    margin: 0;
     font-family: 'Inter', sans-serif;
     background-color: var(--bg);
     color: var(--text);
@@ -27,8 +28,6 @@ body {
 .hero-gradient {
     background: var(--grad);
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
 }
 
 .upload-box {
@@ -36,19 +35,13 @@ body {
     border: 2px dashed var(--border);
     border-radius: 1.5rem;
     backdrop-filter: blur(10px);
-    transition: transform 0.2s ease, border-color 0.2s ease;
-}
-
-.upload-box:hover {
-    border-color: #6366f1;
-    transform: translateY(-2px);
 }
 
 .feature-card {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 1rem;
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
+    transition: all 0.2s;
 }
+
+.feature-card:hover { border-color: #6366f1; }
