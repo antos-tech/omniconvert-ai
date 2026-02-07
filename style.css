@@ -1,64 +1,45 @@
 :root {
-    --bg-main: #020617; /* Sfondo scuro originale */
-    --text-primary: #ffffff;
-    --text-secondary: #94a3b8;
-    --card-bg: rgba(30, 41, 59, 0.2);
-    --border-ui: rgba(99, 102, 241, 0.2);
-    --hero-grad: radial-gradient(circle at 50% -20%, #1e1b4b 0%, #020617 80%);
+    --bg-color: #020617;
+    --text-main: #ffffff;
+    --text-sec: #94a3b8;
+    --card-bg: rgba(30, 41, 59, 0.4);
+    --border-color: rgba(99, 102, 241, 0.2);
+    --grad: radial-gradient(circle at 50% -20%, #1e1b4b 0%, #020617 80%);
 }
 
-/* Quando la classe .light-mode è attiva sul body */
 body.light-mode {
-    --bg-main: #f8fafc;
-    --text-primary: #0f172a;
-    --text-secondary: #64748b;
-    --card-bg: rgba(255, 255, 255, 0.7);
-    --border-ui: rgba(99, 102, 241, 0.1);
-    --hero-grad: radial-gradient(circle at 50% -20%, #e0e7ff 0%, #f8fafc 80%);
+    --bg-color: #f8fafc;
+    --text-main: #0f172a;
+    --text-sec: #64748b;
+    --card-bg: #ffffff;
+    --border-color: #e2e8f0;
+    --grad: radial-gradient(circle at 50% -20%, #e0e7ff 0%, #f8fafc 80%);
 }
 
 body {
-    font-family: 'Inter', sans-serif;
-    background-color: var(--bg-main);
-    color: var(--text-primary);
     margin: 0;
-    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    transition: background-color 0.3s ease;
 }
 
 .hero-gradient {
-    background: var(--hero-grad);
+    background: var(--grad);
     min-height: 100vh;
 }
 
 .upload-box {
     background: var(--card-bg);
-    border: 1px solid var(--border-ui);
+    border: 2px dashed var(--border-color);
     border-radius: 1.5rem;
     backdrop-filter: blur(10px);
 }
 
 .feature-card {
     background: var(--card-bg);
-    border: 1px solid var(--border-ui);
+    border: 1px solid var(--border-color);
     border-radius: 1.2rem;
 }
 
-/* Forza i colori dei testi secondari a seguire il tema */
-.text-slate-400, .text-slate-500 {
-    color: var(--text-secondary) !important;
-}
-
-.progress-bar-container {
-    width: 100%;
-    max-width: 300px;
-    height: 6px;
-    background: rgba(99, 102, 241, 0.1);
-    border-radius: 10px;
-    margin: 20px auto;
-}
-
-.progress-bar-fill {
-    height: 100%;
-    background: #6366f1;
-    transition: width 0.3s ease;
-}
+.text-slate-400, .text-slate-500 { color: var(--text-sec) !important; }
