@@ -75,7 +75,7 @@ const App = () => {
                     </button>
                     {/* LINK GITHUB SISTEMATO */}
                     <a 
-                        href="https://github.com" 
+                        href="https://github.com/antos-tech/omniconvert-ai" 
                         target="_blank" 
                         className="flex items-center gap-2 text-slate-400 text-sm font-medium hover:text-indigo-500 transition"
                     >
@@ -136,3 +136,4 @@ const App = () => {
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<App />);
+
