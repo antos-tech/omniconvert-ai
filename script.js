@@ -1,17 +1,13 @@
 const { useState, useEffect, useRef } = React;
 const { createFFmpeg, fetchFile } = FFmpeg;
 
-const ffmpeg = createFFmpeg({ log: false });
+const ffmpeg = createFFmpeg({ log: true });
 
 const App = () => {
-    const [isDark, setIsDark] = useState(true);
     const [files, setFiles] = useState([]);
     const [status, setStatus] = useState('');
+    const [format, setFormat] = useState('mp4'); // Selezione formato
     const fileInputRef = useRef();
-
-    useEffect(() => {
-        document.body.className = isDark ? '' : 'light-mode';
-    }, [isDark]);
 
     const handleFile = (e) => {
         const selected = Array.from(e.target.files).map(f => ({ id: Math.random(), data: f, name: f.name }));
@@ -20,87 +16,95 @@ const App = () => {
 
     const convert = async (fileObj) => {
         try {
-            setStatus('Inizializzazione...');
+            setStatus('Caricamento motore...');
             if (!ffmpeg.isLoaded()) await ffmpeg.load();
+            
             setStatus('Conversione in corso...');
+            const outName = `output.${format}`;
             ffmpeg.FS('writeFile', fileObj.name, await fetchFile(fileObj.data));
-            await ffmpeg.run('-i', fileObj.name, 'output.mp4');
-            const data = ffmpeg.FS('readFile', 'output.mp4');
-            const url = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+            
+            await ffmpeg.run('-i', fileObj.name, outName);
+            
+            const data = ffmpeg.FS('readFile', outName);
+            const url = URL.createObjectURL(new Blob([data.buffer], { type: `video/${format}` }));
+            
             const a = document.createElement('a');
             a.href = url;
-            a.download = `converted_${fileObj.name.split('.')[0]}.mp4`;
+            a.download = `OmniConvert_${fileObj.name.split('.')[0]}.${format}`;
             a.click();
-            setStatus('Fatto!');
+            setStatus('Completato!');
             setTimeout(() => setStatus(''), 3000);
-        } catch (err) {
-            console.error(err);
-            setStatus('Errore Permessi!');
+        } catch (e) {
+            console.error(e);
+            setStatus('Errore! Controlla console');
         }
     };
 
     return (
-        <div className="hero-gradient flex flex-col items-center">
-            <header className="w-full flex justify-between items-center px-8 py-6 max-w-7xl">
+        <div className="min-h-screen w-full flex flex-col items-center bg-[#020617] text-white font-sans" style={{background: 'radial-gradient(circle at 50% -20%, #1e1b4b 0%, #020617 80%)'}}>
+            <header className="w-full max-w-7xl flex justify-between items-center px-8 py-6">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/30">O</div>
+                    <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center font-bold shadow-lg shadow-indigo-500/30">O</div>
                     <h1 className="font-bold text-xl tracking-tighter">OmniConvert AI</h1>
                 </div>
-                <div className="flex items-center gap-6">
-                    <button onClick={() => setIsDark(!isDark)} className="text-2xl hover:scale-110 transition">
-                        {isDark ? '☀️' : '🌙'}
-                    </button>
-                    <a href="#" className="text-sm font-medium opacity-50 hover:opacity-100 transition">Source</a>
+                <div className="flex items-center gap-4">
+                    <label className="text-xs font-bold uppercase text-slate-500">Formato:</label>
+                    <select 
+                        value={format} 
+                        onChange={(e) => setFormat(e.target.value)}
+                        className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-1 text-sm focus:outline-none focus:border-indigo-500"
+                    >
+                        <option value="mp4">MP4 (Video)</option>
+                        <option value="mkv">MKV (Video)</option>
+                        <option value="avi">AVI (Video)</option>
+                        <option value="mp3">MP3 (Audio)</option>
+                    </select>
                 </div>
             </header>
 
-            <main className="w-full max-w-4xl px-6 py-12 flex flex-col items-center">
-                <div className="text-center mb-12">
-                    <div className="inline-block px-4 py-1 rounded-full border border-indigo-500/20 bg-indigo-500/10 text-indigo-500 text-[10px] font-bold uppercase tracking-widest mb-6">
-                        ✨ Pro version 2.0
-                    </div>
-                    <h2 className="text-5xl md:text-7xl font-black mb-6 tracking-tighter leading-tight">
-                        Convert Everything.<br/>Better Quality.
-                    </h2>
-                    <p className="text-[var(--text-sec)] text-lg max-w-xl mx-auto">
-                        Powerful browser-based converter with resolution optimization.
-                    </p>
+            <main className="w-full max-w-4xl px-6 py-12 flex flex-col items-center text-center">
+                <div className="inline-block px-4 py-1 rounded-full border border-indigo-500/20 bg-indigo-500/10 text-indigo-400 text-[10px] font-bold uppercase tracking-widest mb-8">
+                    ✨ Browser Engine 2.0
                 </div>
-
-                <div className="upload-box w-full p-12 md:p-16 text-center cursor-pointer mb-10" onClick={() => fileInputRef.current.click()}>
+                
+                <h2 className="text-5xl md:text-7xl font-black mb-6 tracking-tighter leading-tight">
+                    Convert Everything.
+                </h2>
+                
+                <div className="w-full p-12 border-2 border-dashed border-indigo-500/30 rounded-[2rem] bg-slate-900/40 backdrop-blur-md cursor-pointer hover:border-indigo-500 transition-all mb-10" onClick={() => fileInputRef.current.click()}>
                     <input type="file" ref={fileInputRef} onChange={handleFile} className="hidden" multiple />
                     <div className="text-5xl mb-4">📥</div>
-                    <h3 className="text-2xl font-bold mb-2">Ready for Transformation?</h3>
-                    <p className="text-[var(--text-sec)]">Click or drag files here</p>
-                    {status && <p className="text-indigo-500 font-bold mt-4 animate-pulse">{status}</p>}
+                    <h3 className="text-2xl font-bold">Trascina i file qui</h3>
+                    <p className="text-slate-500 mt-2 italic text-sm">Seleziona il formato sopra prima di convertire</p>
+                    {status && <p className="text-indigo-400 mt-4 font-bold animate-pulse">{status}</p>}
                 </div>
 
-                {/* Lista File Caricati */}
-                <div className="w-full space-y-3 mb-16">
+                <div className="w-full space-y-4 mb-16">
                     {files.map(f => (
-                        <div key={f.id} className="feature-card p-4 flex justify-between items-center">
-                            <span className="font-medium text-sm truncate">{f.name}</span>
-                            <button onClick={(e) => { e.stopPropagation(); convert(f); }} className="bg-indigo-600 text-white px-5 py-2 rounded-lg text-xs font-bold uppercase">Convert</button>
+                        <div key={f.id} className="flex justify-between items-center bg-slate-900/60 p-5 rounded-2xl border border-indigo-500/20">
+                            <span className="text-sm font-medium">{f.name}</span>
+                            <button onClick={(e) => { e.stopPropagation(); convert(f); }} className="bg-indigo-600 hover:bg-indigo-500 px-6 py-2 rounded-xl text-xs font-bold uppercase transition shadow-lg shadow-indigo-500/20">
+                                Converti in {format.toUpperCase()}
+                            </button>
                         </div>
                     ))}
                 </div>
 
-                {/* SEZIONE FEATURES (Pulsanti sotto) */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-                    <div className="feature-card p-6">
-                        <div className="text-indigo-500 mb-4 text-xl">🛡️</div>
-                        <h4 className="font-bold mb-2">Private & Secure</h4>
-                        <p className="text-xs text-[var(--text-sec)]">I file non lasciano mai il tuo browser. 100% Privacy.</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full text-left">
+                    <div className="p-6 bg-slate-900/40 border border-indigo-500/10 rounded-2xl">
+                        <div className="text-indigo-500 mb-2">🛡️</div>
+                        <h4 className="font-bold text-sm">Privacy Totale</h4>
+                        <p className="text-[10px] text-slate-500">I file non vengono inviati a nessun server.</p>
                     </div>
-                    <div className="feature-card p-6">
-                        <div className="text-indigo-500 mb-4 text-xl">⚡</div>
-                        <h4 className="font-bold mb-2">Fast Engine</h4>
-                        <p className="text-xs text-[var(--text-sec)]">Ottimizzato per conversioni rapide e alta qualità.</p>
+                    <div className="p-6 bg-slate-900/40 border border-indigo-500/10 rounded-2xl">
+                        <div className="text-indigo-500 mb-2">⚡</div>
+                        <h4 className="font-bold text-sm">Potenza Locale</h4>
+                        <p className="text-[10px] text-slate-500">Usa la CPU del tuo computer per la massima velocità.</p>
                     </div>
-                    <div className="feature-card p-6">
-                        <div className="text-indigo-500 mb-4 text-xl">💎</div>
-                        <h4 className="font-bold mb-2">AI Upscaling</h4>
-                        <p className="text-xs text-[var(--text-sec)]">Migliora la risoluzione dei tuoi file automaticamente.</p>
+                    <div className="p-6 bg-slate-900/40 border border-indigo-500/10 rounded-2xl">
+                        <div className="text-indigo-500 mb-2">💎</div>
+                        <h4 className="font-bold text-sm">Multi-Formato</h4>
+                        <p className="text-[10px] text-slate-500">Supporta i principali formati video e audio.</p>
                     </div>
                 </div>
             </main>
